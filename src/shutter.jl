@@ -1,6 +1,13 @@
 struct Shutter{T} <: LabDevice 
   port::T
 end
+
+function Shutter(port::String)
+  if idn(port) != "ArduinoShutter" 
+    error("Port $port is not a shutter")
+  end
+  Shutter(LibSerialPort.open(port, 9600))
+end
  
 
 function get_position(s::Shutter)

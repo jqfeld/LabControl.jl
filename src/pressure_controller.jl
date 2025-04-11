@@ -1,7 +1,7 @@
 export PressureController
 export set_pressure, cur_pressure, scale, set_pid, get_pid
 
-struct PressureController{T}
+struct PressureController{T} <: LabDevice
   port::T
 end
 

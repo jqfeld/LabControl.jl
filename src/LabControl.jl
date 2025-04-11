@@ -25,7 +25,7 @@ end
 
 
 
-function write(dev::LabDevice, str; termination="\n")
+function Base.write(dev::T, str; termination="\n") where {T <: LabDevice}
   Base.write(dev.port, str * termination)
 end
 
@@ -41,8 +41,12 @@ function query_ascii(dev::LabDevice, query; termination="\n")
 end
 
 
+
+
 include("./pressure_controller.jl")
 include("./shutter.jl")
+include("./stec_controller.jl")
+include("./discover.jl")
 # include("./rigol.jl")
 
 # Write your package code here.
