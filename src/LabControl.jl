@@ -43,6 +43,7 @@ end
 
 
 
+include("./wavemaster.jl")
 include("./pressure_controller.jl")
 include("./shutter.jl")
 include("./stec_controller.jl")

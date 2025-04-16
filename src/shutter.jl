@@ -1,3 +1,4 @@
+export Shutter, open_shutter, close_shutter, set_position, get_position
 struct Shutter{T} <: LabDevice 
   port::T
 end

@@ -4,6 +4,12 @@ export set_pressure, cur_pressure, scale, set_pid, get_pid
 struct PressureController{T} <: LabDevice
   port::T
 end
+function PressureController(port::String)
+if idn(port) != "PressureController"
+  error("Port $port is not a PressureController!")
+  end
+  PressureController(LibSerialPort.open(port, 9600))
+end
 
 function set_pressure(p::PressureController)
   drop_previous_input(p.port)

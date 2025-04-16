@@ -19,7 +19,7 @@ function idn(port)
 
   write(p, "*IDN?\n")
   
-  set_read_timeout(p,1)
+  set_read_timeout(p,5)
   try
     model = split(LibSerialPort.readline(p), ",")[2]
     close(p)
