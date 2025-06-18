@@ -1,6 +1,6 @@
-using LabControl
 using Test
+using SafeTestsets
 
-@testset "LabControl.jl" begin
-    # Write your tests here.
-end
+
+@safetestset "Rigol" begin include("rigol_tests.jl") end
+

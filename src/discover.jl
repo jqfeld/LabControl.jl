@@ -4,12 +4,13 @@ export idn, discover_devices
 
 const baudrates = [9600, 19200, 115200]
 
+idn(dev::LabDevice) = query_ascii(dev, "*IDN?")
 
-function idn(port)
+function idn(serial_port::String)
 
   model = nothing
   baud = 9600
-  p = LibSerialPort.open(port, baud)
+  p = LibSerialPort.open(serial_port, baud)
 
   sleep(1)
   drop_previous_input(p)

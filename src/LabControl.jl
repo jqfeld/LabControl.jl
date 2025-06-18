@@ -48,7 +48,7 @@ include("./pressure_controller.jl")
 include("./shutter.jl")
 include("./stec_controller.jl")
 include("./discover.jl")
-# include("./rigol.jl")
+include("./rigol.jl")
 
 # Write your package code here.
 

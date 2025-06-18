@@ -1,6 +1,8 @@
-export get_ch_data, single
+export get_ch_data, single, Rigol
 
-struct Rigol{P}
+
+
+struct Rigol{P} <: LabDevice
   port::P
 end
 
@@ -51,7 +53,7 @@ function _data_to_values(data, params;)
   xs = @. ((a - x_ref - x_orig) * x_incr)
   # ys = @. ((data) * y_incr) #+ y_orig
   ys = @. ((data - y_ref - y_orig) * y_incr)
-  return [xs, ys]
+  return (xs,ys)
 end
 
 function _set_source_channel(osc, ch)
@@ -64,7 +66,6 @@ function _get_source_params(osc)
 end
 
 function _get_binary_data(osc)
-  sleep(0.01)
   query_binary_values(osc, "WAV:DATA?")
 end
 
@@ -77,14 +78,25 @@ function get_ch_data(osc, channel::String)
   return get_ch_data(osc, [channel,])
 end
 
+
+"""
+  get_ch_data(osc, channels::Vector{String})
+
+Sets trigger to single and retrieves a waveform for each channel specified in 
+the channels vector. Channels need to be specified exactly as they are used in
+the SCPI command, e.g. `CHAN1`, `MATH1`, etc.
+
+Returns a `Dict` where the keys are the names of the channels (as in `channels`)
+and the values are tuples, where the first element contains the time axis
+and the second the voltage information."""
 function get_ch_data(osc, channels::Vector{String})
-  single()
-  wfms = Dict()
+  single(osc)
+  wfms = Dict{String, Tuple}()
   for channel in channels
     _set_source_channel(osc, channel)
     params = _get_source_params(osc)
     bin = _get_binary_data(osc)
-    wfms[ch] = _data_to_values(bin, params)
+    wfms[channel] = _data_to_values(bin, params)
   end
   return wfms
 end
