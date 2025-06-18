@@ -1,13 +1,9 @@
 using LibSerialPort
 
-export idn, discover_devices, find_baud
+export idn, discover_devices
 
 const baudrates = [9600, 19200, 115200]
 
-const model_dict = Dict(
-  "HoribaSTECController" => HoribaSTECController,
-  "ArduinoShutter" => Shutter, 
-)
 
 function idn(port)
 
@@ -15,19 +11,26 @@ function idn(port)
   baud = 9600
   p = LibSerialPort.open(port, baud)
 
+  sleep(1)
   drop_previous_input(p)
+  sleep(0.1)
 
   write(p, "*IDN?\n")
-  
-  set_read_timeout(p,5)
+
+  set_read_timeout(p, 5)
   try
-    model = split(LibSerialPort.readline(p), ",")[2]
+    ret = LibSerialPort.readline(p)
+    if contains(ret, "\$")
+      echo, ret = split(ret, "\$")
+    end
+    model = split(ret, ",")[2]
     close(p)
     return model
   catch e
+    # @info ret
     close(p)
-    error("Timeout")
-  clear_read_timeout(p)
+    clear_read_timeout(p)
+    error(e)
   end
   clear_read_timeout(p)
 
@@ -36,11 +39,11 @@ function idn(port)
   end
 
   return model
-end 
+end
 
 
 
-function discover_devices(;sources=[:serial_port])
+function discover_devices(; sources=[:serial_port])
   if :serial_port in sources
     for port in get_port_list()
 
